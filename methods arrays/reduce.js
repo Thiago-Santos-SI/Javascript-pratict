@@ -29,7 +29,7 @@ var max = a.reduce(
         //x é maior que y? se sim faça x, se não faça y
         // 1>2? -> 1>3? -> 1>4? -> 1>5?
         // 5
-    });
+    },6);
 
 console.log(max)
 
