@@ -1,14 +1,17 @@
 const { format } = require('date-fns')
 const { ptBR } = require('date-fns/locale/pt-BR')
+const isBefore = require('date-fns/isBefore')
+const parseISO = require('date-fns/parseISO')
 
-const data_atual = format(new Date, 'dd/MM/yyyy', { locale: ptBR })
+function isFuture(date) {
+    if (!date) {
+        return false;
+    }
 
-function dia_semana(data) {
-    const semana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
-    const arr = data.split('/').reverse();
-    const teste = new Date(arr[0], arr[1] - 1, arr[2]);
-    const dia = teste.getDay();
-    return semana[dia]
+    console.log(parseISO(date), new Date())
+    const dateBefore = isBefore(parseISO(date), new Date());
+
+    return dateBefore;
 }
 
-console.log(dia_semana(data_atual))
+console.log(isFuture('2022-11-27 18:00:00'))
