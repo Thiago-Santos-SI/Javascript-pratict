@@ -1,13 +1,43 @@
+let paramCrazy  = "test: int, crazyMap: HashMap<List<Integer>, HashMap<String, List<List<Double>>>> , test: str"
+let paramTeste = "details: Map<String>, nome: String, carro: Map<String, Integer>,carro: Map<String, Integer>"
 const paramGeneric = "details: Map<String, Integer>, nome: String"
+let string = "HashMap<List<Integer>, HashMap<String, List<List<Double>>>>, test: str"
+
+
 const param = "details: Map<String>, nome: String"
+
+let testObject = [
+    {
+        id: 1,
+        test: paramCrazy,
+        esperado: 'test: int| crazyMap: HashMap<List<Integer>, HashMap<String, List<List<Double>>>> | test: str',
+    },
+    {
+        id: 2,
+        test: paramTeste,
+        esperado: 'details: Map<String>| nome: String| carro: Map<String, Integer>|carro: Map<String, Integer>'
+    },
+    {
+        id: 3,
+        test: string,
+        esperado: 'HashMap<List<Integer>, HashMap<String, List<List<Double>>>>| test: str'
+    },
+    {
+        id: 4,
+        test: paramGeneric,
+        esperado: 'details: Map<String, Integer>| nome: String'
+    },
+    {
+        id: 5,
+        test: param,
+        esperado: 'details: Map<String>| nome: String'
+    },
+]
+
 
 /*
 public void literalGenericTypes(Map<List<Integer>, HashMap<String, List<List<Double>>>> crazyParams)
  */
-
-let paramCrazy  = "test: int, crazyMap: HashMap<List<Integer>, HashMap<String, List<List<Double>>>> , test: str"
-let paramTeste = "details: Map<String>, nome: String, carro: Map<String, Integer>,carro: Map<String, Integer>"
-let string = "HashMap<List<Integer>, HashMap<String, List<List<Double>>>>, test: str"
 
 
 function isGenericType(string, index) {
@@ -29,14 +59,14 @@ function isGenericType(string, index) {
                     return {
                         stringGenericType,
                         index: i,
-                        isGenericType: 0
+                        isGenericType: 1
                     }
                 }
             }
             return {
                 stringGenericType,
                 index: i,
-                isGenericType: 1
+                isGenericType: 0
             }
         }
     }
@@ -65,36 +95,47 @@ function countArrow(string) {
             checkFirstArrow = 1
         }
         if (checkFirstArrow) {
-            stringRefatorada += string[i];
+            if (string[i] === ',') {
+                stringRefatorada += '|'
+            } else {
+                if (string[i] !== undefined) {
+                    stringRefatorada += string[i]
+                }
+            }
         }
 
-        if (string[i] === '>') {
-            checkFirstArrow = 0
-        }
+
     }
     return stringRefatorada
 }
 
 function traceLengthForParams(params) {
     let trace = '-'
-    for (let i = 0; i < params.length; i++) {
+    for (let i = 0; i < 130; i++) {
         trace += '-'
     }
     return trace
 }
 
-console.log(traceLengthForParams(paramCrazy))
-console.log(countArrow(paramCrazy))
-console.log(traceLengthForParams(paramTeste))
-console.log(countArrow(paramTeste))
-console.log(traceLengthForParams(paramTeste))
-console.log(countArrow(string))
-console.log(traceLengthForParams(string))
-console.log(countArrow(paramGeneric))
-console.log(traceLengthForParams(paramGeneric))
-console.log(countArrow(param))
-console.log(traceLengthForParams(param))
+function testUnitCase() {
+    testObject.map(teste => {
+        if (countArrow(teste.test) === teste.esperado){
+            console.log(traceLengthForParams(teste.test))
+            console.log("test: ", teste.test)
+            console.log("compared: ", countArrow(teste.test))
+            console.log("resultado esperado: ", teste.esperado)
+            console.log(true + " - test passed!")
+        } else {
+            console.log(traceLengthForParams(teste.test))
+            console.log("test: ", teste.test)
+            console.log("compared: ", countArrow(teste.test))
+            console.log("resultado esperado: ", teste.esperado)
+            console.log(false + ' - not passed')
+        }
+    })
 
+}
+testUnitCase()
 
 
 
