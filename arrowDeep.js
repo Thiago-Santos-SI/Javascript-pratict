@@ -72,6 +72,27 @@ function isGenericType(string, index) {
     }
 }
 
+function deepArrow(params) {
+    let refactorString = ''
+    for (let i = 0; i < params.length; i++) {
+        if (params[i] === '<') {
+            let objectGenericType = isGenericType(params, i)
+            if (objectGenericType.isGenericType) {
+                refactorString += objectGenericType.stringGenericType
+                i = objectGenericType.index + 1
+            }
+        }
+        if (params[i] === ',') {
+            refactorString += '|'
+        } else {
+            if (params[i] !== '<' && params[i] !== undefined) {
+                refactorString += params[i]
+            }
+        }
+    }
+    return refactorString
+}
+
 function countArrow(string) {
     let stringRefatorada = '';
     let checkFirstArrow = 0;
@@ -103,8 +124,6 @@ function countArrow(string) {
                 }
             }
         }
-
-
     }
     return stringRefatorada
 }
@@ -124,13 +143,15 @@ function testUnitCase() {
             console.log("test: ", teste.test)
             console.log("compared: ", countArrow(teste.test))
             console.log("resultado esperado: ", teste.esperado)
-            console.log(true + " - test passed!")
+            console.log('\033[32m' + true + " - TEST PASSED!")
+            console.log("\033[0m")
         } else {
             console.log(traceLengthForParams(teste.test))
             console.log("test: ", teste.test)
             console.log("compared: ", countArrow(teste.test))
             console.log("resultado esperado: ", teste.esperado)
-            console.log(false + ' - not passed')
+            console.warn("\033[31m" + false + ' - TEST NOT PASSED')
+            console.log("\033[0m")
         }
     })
 
