@@ -9,5 +9,6 @@ async function file_get_contents(uri, callback) {
 
 file_get_contents("https://public-inti.s3.sa-east-1.amazonaws.com/maps/test/map-1.svg", console.log);
 // or
-file_get_contents("https://public-inti.s3.sa-east-1.amazonaws.com/maps/test/map-1.svg").then(ret => console.log(ret));
+file_get_contents("https://public-inti.s3.sa-east-1.amazonaws.com/maps/test/map-1.svg")
+     .then(ret => console.log(ret));
 
