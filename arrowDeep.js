@@ -1,10 +1,12 @@
-let paramCrazy  = "test: int, crazyMap: HashMap<List<Integer>, HashMap<String, List<List<Double>>>> , test: str"
+let paramCrazy = "test: int, crazyMap: HashMap<List<Integer>, HashMap<String, List<List<Double>>>> , test: str"
 let paramTeste = "details: Map<String>, nome: String, carro: Map<String, Integer>,carro: Map<String, Integer>"
 const paramGeneric = "details: Map<String, Integer>, nome: String"
 let string = "HashMap<List<Integer>, HashMap<String, List<List<Double>>>>, test: str"
 
+let paramCrazyERROR = "test: int, crazyMap: HashMap<List<Integer>, HashMap<String, List<List<Double>>>> , test: str"
 
 const param = "details: Map<String>, nome: String"
+const paramERROR = "teste2: Map<str, ArrayList<Str>>>"
 
 let testObject = [
     {
@@ -39,6 +41,29 @@ let testObject = [
 public void literalGenericTypes(Map<List<Integer>, HashMap<String, List<List<Double>>>> crazyParams)
  */
 
+function semanticAnalysis(GenericType) {
+    let countLeftArrow = 0;
+    let countRightArrow = 0;
+
+    for (const stringGenericTypeElement of GenericType) {
+        if (stringGenericTypeElement === '<') {
+            countLeftArrow++;
+        }
+        if (stringGenericTypeElement === '>') {
+            countRightArrow++
+        }
+    }
+    if (countLeftArrow === (countRightArrow + 1)) {
+        throw new Error('missing ending ' > '')
+    }
+    if (countRightArrow > (countLeftArrow + 2)) {
+        throw new Error('unbalanced or strange char (">")')
+    }
+    if (countRightArrow > countLeftArrow) {
+        throw new Error('unbalanced or strange char (">")')
+    }
+}
+
 
 function isGenericType(string, index) {
     let countLeftArrow = 0;
@@ -50,83 +75,70 @@ function isGenericType(string, index) {
         if (string[i] === '<') {
             countLeftArrow++;
         }
+        let count = -3;
         if (string[i] === '>') {
             countRightArrow++
-        }
-        if (countLeftArrow === countRightArrow) {
-            for (let stringGenericTypeElement of stringGenericType) {
-                if (stringGenericTypeElement === ',') {
-                    return {
-                        stringGenericType,
-                        index: i,
-                        isGenericType: 1
+            if (string[i + 1] === '>') {
+                for (let j = 1; j < countLeftArrow + 3; j++) {
+                    if (string[i + j] === '>') {
+                        stringGenericType += string[i + j]
+                        count += j;
+                    } else {
+                        semanticAnalysis(stringGenericType)
+                        i = i + count
+                        return {
+                            stringGenericType,
+                            index: i,
+                        }
                     }
                 }
+
             }
+        }
+        if (countLeftArrow === 1 && countRightArrow === 1) {
             return {
                 stringGenericType,
                 index: i,
-                isGenericType: 0
             }
         }
     }
-}
-
-function deepArrow(params) {
-    let refactorString = ''
-    for (let i = 0; i < params.length; i++) {
-        if (params[i] === '<') {
-            let objectGenericType = isGenericType(params, i)
-            if (objectGenericType.isGenericType) {
-                refactorString += objectGenericType.stringGenericType
-                i = objectGenericType.index + 1
-            }
-        }
-        if (params[i] === ',') {
-            refactorString += '|'
-        } else {
-            if (params[i] !== '<' && params[i] !== undefined) {
-                refactorString += params[i]
-            }
-        }
-    }
-    return refactorString
 }
 
 function countArrow(string) {
-    let stringRefatorada = '';
+    let stringRefactored = '';
     let checkFirstArrow = 0;
 
     for (let i = 0; i < string.length; i++) {
         if (!checkFirstArrow) {
             if (string[i] === ',') {
-                stringRefatorada += '|'
+                stringRefactored += '|'
             } else {
                 if (string[i] !== '<') {
-                    stringRefatorada += string[i]
+                    stringRefactored += string[i]
                 }
             }
         }
         if (string[i] === '<') {
-            let objectGenericType = isGenericType(string, i)
-            if (objectGenericType.isGenericType) {
-                stringRefatorada += objectGenericType.stringGenericType
-                i = objectGenericType.index + 1
-            }
+            const objectGenericType = isGenericType(string, i)
+            stringRefactored += objectGenericType.stringGenericType
+            i = objectGenericType.index + 1
             checkFirstArrow = 1
         }
         if (checkFirstArrow) {
             if (string[i] === ',') {
-                stringRefatorada += '|'
+                stringRefactored += '|'
             } else {
                 if (string[i] !== undefined) {
-                    stringRefatorada += string[i]
+                    stringRefactored += string[i]
                 }
             }
         }
     }
-    return stringRefatorada
+    return stringRefactored
 }
+
+//console.log(countArrow(paramCrazyERROR))
+
 
 function traceLengthForParams(params) {
     let trace = '-'
@@ -135,6 +147,7 @@ function traceLengthForParams(params) {
     }
     return trace
 }
+
 
 function testUnitCase() {
     testObject.map(teste => {
@@ -160,6 +173,6 @@ testUnitCase()
 
 
 
+
 //console.log(func.split("|").map(e => e.trim()))
 
-//console.log(isGeneric(paramTeste))
